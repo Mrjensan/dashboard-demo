@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Analytics - Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Analytics Pro</span>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-section="overview">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Overview</span>
+                </a>
+                <a href="#" class="nav-item" data-section="sales">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Vendas</span>
+                </a>
+                <a href="#" class="nav-item" data-section="analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" class="nav-item" data-section="users">
+                    <i class="fas fa-users"></i>
+                    <span>Usuários</span>
+                </a>
+                <a href="#" class="nav-item" data-section="reports">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Relatórios</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="settings-btn" id="settingsBtn">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-content">
+                    <div class="header-left">
+                        <button class="mobile-menu-btn" id="mobileMenuBtn">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
+                    </div>
+                    <div class="header-controls">
+                        <div class="date-range-picker">
+                            <select id="dateRange">
+                                <option value="today">Hoje</option>
+                                <option value="week">Esta Semana</option>
+                                <option value="month" selected>Este Mês</option>
+                                <option value="quarter">Trimestre</option>
+                                <option value="year">Ano</option>
+                            </select>
+                        </div>
+                        <div class="theme-switcher">
+                            <button id="themeBtn" class="theme-btn">
+                                <i class="fas fa-moon"></i>
+                            </button>
+                        </div>
+                        <span class="last-update">Última atualização: <span id="lastUpdate"></span></span>
+                        <button class="refresh-btn" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i> Atualizar
+                        </button>
+                        <button class="export-btn" id="exportBtn">
+                            <i class="fas fa-download"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Content Sections -->
+            <div class="dashboard-content">
+                <!-- Overview Section -->
+                <section class="content-section active" id="overview-section">
+                    <!-- KPI Cards -->
+                    <div class="section-header">
+                        <h2>Visão Geral</h2>
+                        <div class="section-controls">
+                            <button class="widget-btn" id="addWidgetBtn">
+                                <i class="fas fa-plus"></i> Adicionar Widget
+                            </button>
+                            <button class="layout-btn" id="layoutBtn">
+                                <i class="fas fa-th"></i> Layout
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-section" id="kpiSection">
+                        <div class="kpi-card" data-aos="fade-up" draggable="true">
+                            <div class="kpi-header">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="kpi-actions">
+                                    <button class="kpi-action-btn" data-action="settings">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="kpi-action-btn" data-action="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Usuários Ativos</h3>
+                                <p class="kpi-value" id="activeUsers">0</p>
+                                <span class="kpi-change positive" id="usersChange">+12.5%</span>
+                                <div class="kpi-chart">
+                                    <canvas id="usersSparkline" width="100" height="40"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card" data-aos="fade-up" data-aos-delay="100" draggable="true">
+                            <div class="kpi-header">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="kpi-actions">
+                                    <button class="kpi-action-btn" data-action="settings">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="kpi-action-btn" data-action="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Vendas Hoje</h3>
+                                <p class="kpi-value" id="salesCount">0</p>
+                                <span class="kpi-change positive" id="salesChange">+8.3%</span>
+                                <div class="kpi-chart">
+                                    <canvas id="salesSparkline" width="100" height="40"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card" data-aos="fade-up" data-aos-delay="200" draggable="true">
+                            <div class="kpi-header">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <div class="kpi-actions">
+                                    <button class="kpi-action-btn" data-action="settings">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="kpi-action-btn" data-action="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Receita</h3>
+                                <p class="kpi-value" id="revenue">R$ 0</p>
+                                <span class="kpi-change positive" id="revenueChange">+15.2%</span>
+                                <div class="kpi-chart">
+                                    <canvas id="revenueSparkline" width="100" height="40"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card" data-aos="fade-up" data-aos-delay="300" draggable="true">
+                            <div class="kpi-header">
+                                <div class="kpi-icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="kpi-actions">
+                                    <button class="kpi-action-btn" data-action="settings">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="kpi-action-btn" data-action="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="kpi-content">
+                                <h3>Visualizações</h3>
+                                <p class="kpi-value" id="pageViews">0</p>
+                                <span class="kpi-change negative" id="viewsChange">-2.1%</span>
+                                <div class="kpi-chart">
+                                    <canvas id="viewsSparkline" width="100" height="40"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-section" id="chartsSection">
+                        <div class="chart-container" data-aos="fade-up" data-aos-delay="400" draggable="true">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <h3>Vendas por Mês</h3>
+                                </div>
+                                <div class="chart-controls-wrapper">
+                                    <select id="salesPeriod">
+                                        <option value="6months">Últimos 6 meses</option>
+                                        <option value="12months">Último ano</option>
+                                    </select>
+                                    <div class="chart-actions">
+                                        <button class="chart-action-btn" data-action="fullscreen">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                        <button class="chart-action-btn" data-action="settings">
+                                            <i class="fas fa-cog"></i>
+                                        </button>
+                                        <button class="chart-action-btn" data-action="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <canvas id="salesChart"></canvas>
+                        </div>
+
+                        <div class="chart-container" data-aos="fade-up" data-aos-delay="500" draggable="true">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <h3>Distribuição de Tráfego</h3>
+                                </div>
+                                <div class="chart-actions">
+                                    <button class="chart-action-btn" data-action="fullscreen">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                    <button class="chart-action-btn" data-action="settings">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="chart-action-btn" data-action="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <canvas id="trafficChart"></canvas>
+                        </div>
+
+                        <!-- Novos Gráficos Avançados -->
+                        <div class="chart-container" data-aos="fade-up" data-aos-delay="550" draggable="true">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <h3>Radar de Performance</h3>
+                                </div>
+                                <div class="chart-actions">
+                                    <button class="chart-action-btn" data-action="fullscreen">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                    <button class="chart-action-btn" data-action="settings">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="chart-action-btn" data-action="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <canvas id="radarChart"></canvas>
+                        </div>
+
+                        <div class="chart-container gauge-container" data-aos="fade-up" data-aos-delay="600" draggable="true">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <h3>Meta de Vendas</h3>
+                                </div>
+                                <div class="chart-actions">
+                                    <button class="chart-action-btn" data-action="settings">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="chart-action-btn" data-action="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="gauge-chart" id="gaugeChart">
+                                <canvas id="salesGauge"></canvas>
+                                <div class="gauge-center">
+                                    <span class="gauge-value" id="gaugeValue">78%</span>
+                                    <span class="gauge-label">Meta Atingida</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chart-container wide" data-aos="fade-up" data-aos-delay="650" draggable="true">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <h3>Performance em Tempo Real</h3>
+                                </div>
+                                <div class="chart-controls-wrapper">
+                                    <div class="chart-controls">
+                                        <button class="chart-btn active" data-period="hour">1h</button>
+                                        <button class="chart-btn" data-period="day">24h</button>
+                                        <button class="chart-btn" data-period="week">7d</button>
+                                    </div>
+                                    <div class="chart-actions">
+                                        <button class="chart-action-btn" data-action="fullscreen">
+                                            <i class="fas fa-expand"></i>
+                                        </button>
+                                        <button class="chart-action-btn" data-action="settings">
+                                            <i class="fas fa-cog"></i>
+                                        </button>
+                                        <button class="chart-action-btn" data-action="remove">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <canvas id="realtimeChart"></canvas>
+                        </div>
+
+                        <!-- Heatmap Chart -->
+                        <div class="chart-container wide" data-aos="fade-up" data-aos-delay="700" draggable="true">
+                            <div class="chart-header">
+                                <div class="chart-title">
+                                    <h3>Mapa de Calor - Atividade por Hora</h3>
+                                </div>
+                                <div class="chart-actions">
+                                    <button class="chart-action-btn" data-action="fullscreen">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                    <button class="chart-action-btn" data-action="settings">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <button class="chart-action-btn" data-action="remove">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="heatmap-container" id="heatmapContainer">
+                                <!-- Heatmap será gerado via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Activity Section -->
+                    <div class="activity-section" data-aos="fade-up" data-aos-delay="750">
+                        <div class="section-header">
+                            <h3>Atividade Recente</h3>
+                            <div class="activity-filters">
+                                <select id="activityFilter">
+                                    <option value="all">Todas</option>
+                                    <option value="sales">Vendas</option>
+                                    <option value="users">Usuários</option>
+                                    <option value="system">Sistema</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="activity-list" id="activityList">
+                            <!-- Atividades serão inseridas via JavaScript -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Other Sections -->
+                <section class="content-section" id="sales-section">
+                    <div class="section-header">
+                        <h2>Análise de Vendas</h2>
+                    </div>
+                    <p>Conteúdo da seção de vendas...</p>
+                </section>
+
+                <section class="content-section" id="analytics-section">
+                    <div class="section-header">
+                        <h2>Analytics Avançado</h2>
+                    </div>
+                    <p>Conteúdo da seção de analytics...</p>
+                </section>
+
+                <section class="content-section" id="users-section">
+                    <div class="section-header">
+                        <h2>Gestão de Usuários</h2>
+                    </div>
+                    <p>Conteúdo da seção de usuários...</p>
+                </section>
+
+                <section class="content-section" id="reports-section">
+                    <div class="section-header">
+                        <h2>Relatórios</h2>
+                    </div>
+                    <p>Conteúdo da seção de relatórios...</p>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Configurações</h3>
+                <button class="modal-close" id="closeSettings">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="settings-section">
+                    <h4>Aparência</h4>
+                    <div class="setting-item">
+                        <label>Tema</label>
+                        <select id="themeSelect">
+                            <option value="light">Claro</option>
+                            <option value="dark">Escuro</option>
+                            <option value="auto">Automático</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>Cor Principal</label>
+                        <div class="color-picker">
+                            <button class="color-option" data-color="#667eea" style="background: #667eea;"></button>
+                            <button class="color-option" data-color="#764ba2" style="background: #764ba2;"></button>
+                            <button class="color-option" data-color="#f093fb" style="background: #f093fb;"></button>
+                            <button class="color-option" data-color="#4facfe" style="background: #4facfe;"></button>
+                            <button class="color-option" data-color="#43e97b" style="background: #43e97b;"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h4>Layout</h4>
+                    <div class="setting-item">
+                        <label>Sidebar</label>
+                        <select id="sidebarMode">
+                            <option value="expanded">Expandida</option>
+                            <option value="collapsed">Recolhida</option>
+                            <option value="hidden">Oculta</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label>Atualização Automática</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="autoRefresh" checked>
+                            <label for="autoRefresh"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h4>Notificações</h4>
+                    <div class="setting-item">
+                        <label>Alertas de Meta</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="goalAlerts" checked>
+                            <label for="goalAlerts"></label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <label>Sons</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="soundAlerts">
+                            <label for="soundAlerts"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="resetSettings">Restaurar Padrão</button>
+                <button class="btn-primary" id="saveSettings">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Widget Selection Modal -->
+    <div class="modal-overlay" id="widgetModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Adicionar Widget</h3>
+                <button class="modal-close" id="closeWidget">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="widget-grid">
+                    <div class="widget-option" data-widget="kpi">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>KPI Card</span>
+                    </div>
+                    <div class="widget-option" data-widget="chart">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Gráfico</span>
+                    </div>
+                    <div class="widget-option" data-widget="table">
+                        <i class="fas fa-table"></i>
+                        <span>Tabela</span>
+                    </div>
+                    <div class="widget-option" data-widget="map">
+                        <i class="fas fa-map"></i>
+                        <span>Mapa</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification System -->
+    <div class="notifications-container" id="notifications">
+        <!-- Notifications will be inserted here -->
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-chart-line"></i>
+            <p>Carregando dados...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
